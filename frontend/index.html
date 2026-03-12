@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FaceDebt</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+<script defer src="js/app.js"></script>
+</head>
+<body>
+    
+    <div id="loading">
+        <p>Loading models...</p>
+    </div>
+
+    <div id="add-face">
+        <h2>ADD A FACE HERE</h2>
+
+
+        <video id="camera" autoplay muted playsinline></video><br>
+        <canvas id="face-snap" style="display:none;"></canvas><br><br>
+
+        <button id="start-camera">START CAMERA</button>
+        <button id="capture">CAPTURE YOUR FACE</button>
+        <button id="face-add">ADD FACE</button><br><br>
+    
+        <label for="name">NAME:</label>
+            <input type="text" id="username" placeholder="NAME">
+            <br><br>
+
+        <label for="debt">DEBT :</label>
+            <input type="number" id="debt-amount" placeholder="DEBT">
+    </div>
+
+    <div id="scan-face">
+        <h2>IDENTIFYING THE FACE</h2>
+    </div>
+
+<!-- HAVE TO HOST face recog LOCALLY TO LERN SOMEDAY -->
+
+</body>
+</html>
+
+
+
+
