@@ -29,12 +29,18 @@
             <input type="text" id="username" placeholder="NAME">
             <br><br>
 
-        <label for="debt">DEBT :</label>
+        <label for="debt">DEBT(₹):</label>
             <input type="number" id="debt-amount" placeholder="DEBT">
     </div>
 
     <div id="scan-face">
-        <h2>IDENTIFYING THE FACE</h2>
+        <h2>IDENTIFY THE FACE</h2>
+
+        <video id="scanner" autoplay muted playsinline></video>
+        <button id="btn-scan">SCAN THE FACE</button>
+
+        <div id="result"></div>
+        
     </div>
 
 <!-- HAVE TO HOST face recog LOCALLY TO LERN SOMEDAY -->

@@ -25,6 +25,7 @@ const face_tr=document.querySelector("#face-add")
 
 const user=document.querySelector("#username")
 const debt=document.querySelector("#debt-amount")
+let allPeople = JSON.parse(localStorage.getItem("allPeople") || "[]")
 let stream=null
 
 cam_st.addEventListener("click",async()=>{
@@ -89,8 +90,58 @@ face_tr.addEventListener("click",async()=>{
     }   
     
     localStorage.setItem(`person${id}`,JSON.stringify(userData))
+    allPeople.push(`person${id}`)
+    localStorage.setItem("allPeople",JSON.stringify(allPeople))
 
     user.value="";
     debt.value="";
     
+})
+
+//FOR SCANNING
+const scanBtn=document.querySelector("#btn-scan")
+const scanner=document.querySelector("#scanner")
+const scan_result=document.querySelector("#result")
+let isCameraOn = false
+
+scanBtn.addEventListener("click",async()=>{
+if(!isCameraOn){
+     stream=await navigator.mediaDevices.getUserMedia({video:true})
+    scanner.srcObject=stream
+    isCameraOn=true
+}
+else{
+    const detection = await faceapi.detectSingleFace(scanner).withFaceLandmarks().withFaceDescriptor()
+    if(!detection){
+        alert("No face detected")
+        return
+    }
+    else{
+
+        const loadedPeople = []
+
+        allPeople.forEach((key)=>{
+            loadedPeople.push(JSON.parse(localStorage.getItem(key)))
+        })
+        const labeledDescriptors = []
+        loadedPeople.forEach(person=>{
+            const descriptor = new Float32Array(Object.values(person.face_arr))
+            labeledDescriptors.push(new faceapi.LabeledFaceDescriptors(person.id, [descriptor]))
+        })
+        const faceMatcher = new faceapi.FaceMatcher(labeledDescriptors)
+        const match = faceMatcher.findBestMatch(detection.descriptor)
+        console.log(match)
+
+        if(match.label==="unknown"){
+            scan_result.innerHTML=`<h1>Person not found in records</h1>`
+            return
+        }
+
+        const matchedPerson=loadedPeople.find(person=>person.id===Number(match.label))
+
+        scan_result.innerHTML=`<h1>${matchedPerson.user} owes you ₹ ${matchedPerson.debt}</h1>`
+    }
+}
+
+
 })
