@@ -1,0 +1,20 @@
+{
+  "name": "FaceDebt",
+  "short_name": "FaceDebt",
+  "start_url": "/frontend/index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+      {
+    "src": "/frontend/assets/image-192.png",
+    "sizes": "192x192",
+    "type": "image/png"
+  },
+  {
+    "src": "/frontend/assets/image-512.png",
+    "sizes": "512x512",
+    "type": "image/png"
+  }
+  ]
+}

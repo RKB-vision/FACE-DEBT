@@ -20,6 +20,9 @@ loadModels();
 const cam_st=document.querySelector("#start-camera")
 const capt=document.querySelector("#capture")
 const camera=document.querySelector("#camera")
+let camFlip=document.querySelector("#flip-cam")
+let activeVideo=null
+
 const canva=document.querySelector("#face-snap")
 const face_tr=document.querySelector("#face-add")
 
@@ -32,8 +35,8 @@ cam_st.addEventListener("click",async()=>{
     try{
     canva.style.display="none"
     camera.style.display="block"
-    stream=await navigator.mediaDevices.getUserMedia({video:true})
-    camera.srcObject=stream
+    streamer(camera);
+    activeVideo=camera;
 
     capt.disabled=false
     cam_st.disabled=true
@@ -106,8 +109,9 @@ let isCameraOn = false
 
 scanBtn.addEventListener("click",async()=>{
 if(!isCameraOn){
-     stream=await navigator.mediaDevices.getUserMedia({video:true})
-    scanner.srcObject=stream
+    streamer(scanner);
+    activeVideo=scanner;
+
     isCameraOn=true
 }
 else{
@@ -126,7 +130,7 @@ else{
         const labeledDescriptors = []
         loadedPeople.forEach(person=>{
             const descriptor = new Float32Array(Object.values(person.face_arr))
-            labeledDescriptors.push(new faceapi.LabeledFaceDescriptors(person.id, [descriptor]))
+            labeledDescriptors.push(new faceapi.LabeledFaceDescriptors(String(person.id), [descriptor]))
         })
         const faceMatcher = new faceapi.FaceMatcher(labeledDescriptors)
         const match = faceMatcher.findBestMatch(detection.descriptor)
@@ -137,7 +141,7 @@ else{
             return
         }
 
-        const matchedPerson=loadedPeople.find(person=>person.id===Number(match.label))
+        const matchedPerson=loadedPeople.find(person=>String(person.id)===match.label)
 
         scan_result.innerHTML=`<h1>${matchedPerson.user} owes you ₹ ${matchedPerson.debt}</h1>`
     }
@@ -145,3 +149,22 @@ else{
 
 
 })
+let facingMode="user"
+
+camFlip.addEventListener("click",()=>{
+    facingMode= facingMode === "user" ? "environment" : "user"
+    stream.getTracks().forEach(track=>track.stop())
+    streamer(activeVideo)
+})
+
+async function streamer(videoElement){
+    stream= await navigator.mediaDevices.getUserMedia({video:{facingMode}})
+    videoElement.srcObject=stream;
+}
+
+//FOR ADD TO HOME
+if("serviceWorker" in navigator){
+    navigator.serviceWorker.register("/frontend/serviceworker.js")
+    .then(()=> console.log("Service worker registered"))
+    .catch(err=> console.log("Service worker failed", err))
+}
